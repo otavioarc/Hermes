@@ -1,5 +1,5 @@
 package com.hermes.core;
 
 public interface IHermes {
-    Object send(Object message);
+    Object send(Object request);
 }
