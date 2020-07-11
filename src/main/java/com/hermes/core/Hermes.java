@@ -22,7 +22,7 @@ public class Hermes implements IHermes {
     }
 
     @Override
-    public Object send(Object message) {
+    public Object send(Object request) {
         try {
             ApplicationContext applicationContext = springContext.getApplicationContext();
             Map<String, IRequestHandler> handlers = applicationContext.getBeansOfType(IRequestHandler.class);
@@ -34,13 +34,13 @@ public class Hermes implements IHermes {
                         .forEach(method -> {
                             Arrays.asList(method.getParameterTypes())
                                     .forEach(aClass -> {
-                                        if (Objects.equals(aClass, message.getClass()))
+                                        if (Objects.equals(aClass, request.getClass()))
                                             requestHandler.set(iRequestHandler);
                                     });
                         });
             });
 
-            return requestHandler.get().handle(message);
+            return requestHandler.get().handle(request);
         } catch (Exception e) {
             e.printStackTrace();
         }
