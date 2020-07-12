@@ -65,7 +65,7 @@ public class Hermes implements IHermes {
 
     /**
      * Private method that get {@code handle} declared method that receive {@code IMessage} as parameter and
-     * calls {@link #doesItReceivesMessageTypeAsParameter(Method, Object)} to validate if the parameter class type of
+     * calls {@link #doesItReceivesMessageTypeAsParameter(Method, IMessage)} to validate if the parameter class type of
      * {@code handle} method is the same of {@code message} parameter.
      * @param requestHandler the handler being validated.
      * @param message that should be redirect to the corresponding message handler.
@@ -73,13 +73,9 @@ public class Hermes implements IHermes {
      * return false.
      * @throws RuntimeException if message handler passed as parameter doesn't declares a {@code handle} method
      */
-    private boolean doesItHandleMessage(IMessageHandler requestHandler, Object message) {
-        try {
-            Method handleMethod = requestHandler.getClass().getDeclaredMethod("handle", Object.class);
-            return doesItReceivesMessageTypeAsParameter(handleMethod, message);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e.getCause());
-        }
+    private boolean doesItHandleMessage(IMessageHandler requestHandler, IMessage message) {
+        return Arrays.stream(requestHandler.getClass().getDeclaredMethods())
+                .anyMatch(method -> doesItReceivesMessageTypeAsParameter(method, message));
     }
 
     /**
@@ -91,7 +87,7 @@ public class Hermes implements IHermes {
      * @return true if the method passed as parameter can be executed with message class type. Otherwise
      * return false.
      */
-    private boolean doesItReceivesMessageTypeAsParameter(Method method, Object message) {
+    private boolean doesItReceivesMessageTypeAsParameter(Method method, IMessage message) {
         return Arrays.stream(method.getParameterTypes())
                 .anyMatch(parameterType -> parameterType.equals(message.getClass()));
     }
