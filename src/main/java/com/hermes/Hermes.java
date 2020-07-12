@@ -33,16 +33,12 @@ public class Hermes implements IHermes {
         return handler.handle(message);
     }
 
-    private boolean doesItHandleMessage(IMessageHandler requestHandler, Object message) {
-        try {
-            Method handleMethod = requestHandler.getClass().getDeclaredMethod("handle", Object.class);
-            return doesItReceivesMessageTypeAsParameter(handleMethod, message);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e.getCause());
-        }
+    private boolean doesItHandleMessage(IMessageHandler requestHandler, IMessage message) {
+        return Arrays.stream(requestHandler.getClass().getDeclaredMethods())
+                .anyMatch(method -> doesItReceivesMessageTypeAsParameter(method, message));
     }
 
-    private boolean doesItReceivesMessageTypeAsParameter(Method method, Object message) {
+    private boolean doesItReceivesMessageTypeAsParameter(Method method, IMessage message) {
         return Arrays.stream(method.getParameterTypes())
                 .anyMatch(parameterType -> parameterType.equals(message.getClass()));
     }
