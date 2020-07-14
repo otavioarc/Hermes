@@ -1,8 +1,7 @@
 package com.hermes;
 
-import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 /**
@@ -11,29 +10,28 @@ import org.springframework.stereotype.Component;
  * @since 0.0.1
  */
 @Component
-public class SpringContext implements ApplicationContextAware {
+public class SpringContext {
 
     /**
      * Static field to store running Spring application context.
      */
-    private static ApplicationContext applicationContext;
+    private final ApplicationContext applicationContext;
 
     /**
      * Constructor with {@code ApplicationContext} as parameter to be inject by Spring.
-     * Assign Spring running application context to the static field {@link #applicationContext}
+     * Assign Spring running application context to the final field {@link #applicationContext}
      * @param applicationContext represents Spring running application context.
-     * @throws BeansException
      */
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        SpringContext.applicationContext = applicationContext;
+    @Autowired
+    public SpringContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     /**
      * Retrieve Spring running application context.
      * @return Spring running application context.
      */
-    public ApplicationContext getApplicationContext() {
-        return SpringContext.applicationContext;
+    ApplicationContext getApplicationContext() {
+        return this.applicationContext;
     }
 }
