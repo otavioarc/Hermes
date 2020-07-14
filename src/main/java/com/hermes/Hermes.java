@@ -21,7 +21,7 @@ public class Hermes implements IHermes {
      * Represents Spring Context of running application.
      * @see SpringContext
      */
-    private SpringContext springContext;
+    private final SpringContext springContext;
 
     /**
      * Inject {@code SpringContext} during bean initialization.
@@ -52,7 +52,7 @@ public class Hermes implements IHermes {
                 .getBeansOfType(IMessageHandler.class)
                 .values();
 
-        IMessageHandler handler = initializedHandlers.stream()
+        IMessageHandler handler = initializedHandlers.parallelStream()
                 .filter(messageHandler -> doesItHandleMessage(messageHandler, message))
                 .findFirst()
                 .orElseThrow(() ->
@@ -74,7 +74,7 @@ public class Hermes implements IHermes {
      * @throws RuntimeException if message handler passed as parameter doesn't declares a {@code handle} method
      */
     private boolean doesItHandleMessage(IMessageHandler requestHandler, IMessage message) {
-        return Arrays.stream(requestHandler.getClass().getDeclaredMethods())
+        return Arrays.stream(requestHandler.getClass().getDeclaredMethods()).parallel()
                 .anyMatch(method -> doesItReceivesMessageTypeAsParameter(method, message));
     }
 
@@ -88,7 +88,7 @@ public class Hermes implements IHermes {
      * return false.
      */
     private boolean doesItReceivesMessageTypeAsParameter(Method method, IMessage message) {
-        return Arrays.stream(method.getParameterTypes())
+        return Arrays.stream(method.getParameterTypes()).parallel()
                 .anyMatch(parameterType -> parameterType.equals(message.getClass()));
     }
 }
