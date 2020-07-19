@@ -15,7 +15,7 @@ import java.util.NoSuchElementException;
  * @since 0.0.1
  */
 @Component
-public class Hermes implements IHermes {
+public class Hermes {
 
     /**
      * Represents Spring Context of running application.
@@ -38,21 +38,20 @@ public class Hermes implements IHermes {
      * {@code IMessageHandler}.
      * @param message an object that implements {@code IMessage} and should be treated by a handler.
      * @return response type specified on {@code message} class declaration.
-     * @see IMessageHandler
-     * @see IMessage
+     * @see MessageHandler
+     * @see Message
      * @throws NoSuchElementException if no handler was found for message class type.
      * @throws RuntimeException if no {@code handle} method with an argument of type {@code IMessage} was found in
      * a bean that implements {@code IMessageHandler}.
      */
-    @Override
-    public Object send(IMessage message) {
+    public Object send(Message message) {
         ApplicationContext applicationContext = springContext.getApplicationContext();
 
-        Collection<IMessageHandler> initializedHandlers = applicationContext
-                .getBeansOfType(IMessageHandler.class)
+        Collection<MessageHandler> initializedHandlers = applicationContext
+                .getBeansOfType(MessageHandler.class)
                 .values();
 
-        IMessageHandler handler = initializedHandlers.parallelStream()
+        MessageHandler handler = initializedHandlers.parallelStream()
                 .filter(messageHandler -> doesItHandleMessage(messageHandler, message))
                 .findFirst()
                 .orElseThrow(() ->
@@ -65,7 +64,7 @@ public class Hermes implements IHermes {
 
     /**
      * Private method that get {@code handle} declared method that receive {@code IMessage} as parameter and
-     * calls {@link #doesItReceivesMessageTypeAsParameter(Method, IMessage)} to validate if the parameter class type of
+     * calls {@link #doesItReceivesMessageTypeAsParameter(Method, Message)} to validate if the parameter class type of
      * {@code handle} method is the same of {@code message} parameter.
      * @param requestHandler the handler being validated.
      * @param message that should be redirect to the corresponding message handler.
@@ -73,7 +72,7 @@ public class Hermes implements IHermes {
      * return false.
      * @throws RuntimeException if message handler passed as parameter doesn't declares a {@code handle} method
      */
-    private boolean doesItHandleMessage(IMessageHandler requestHandler, IMessage message) {
+    private boolean doesItHandleMessage(MessageHandler requestHandler, Message message) {
         return Arrays.stream(requestHandler.getClass().getDeclaredMethods()).parallel()
                 .anyMatch(method -> doesItReceivesMessageTypeAsParameter(method, message));
     }
@@ -87,7 +86,7 @@ public class Hermes implements IHermes {
      * @return true if the method passed as parameter can be executed with message class type. Otherwise
      * return false.
      */
-    private boolean doesItReceivesMessageTypeAsParameter(Method method, IMessage message) {
+    private boolean doesItReceivesMessageTypeAsParameter(Method method, Message message) {
         return Arrays.stream(method.getParameterTypes()).parallel()
                 .anyMatch(parameterType -> parameterType.equals(message.getClass()));
     }

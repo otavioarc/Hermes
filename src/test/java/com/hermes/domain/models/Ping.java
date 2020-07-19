@@ -1,6 +1,6 @@
 package com.hermes.domain.models;
 
-import com.hermes.IMessage;
+import com.hermes.Message;
 
-public class Ping implements IMessage<String> {
+public class Ping implements Message<String> {
 }

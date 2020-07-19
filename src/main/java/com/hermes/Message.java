@@ -6,5 +6,5 @@ package com.hermes;
  * @since 0.0.1
  * @param <ResponseT> the class type that handler should return.
  */
-public interface IMessage<ResponseT extends Object> {
+public interface Message<ResponseT extends Object> {
 }
