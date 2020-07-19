@@ -40,10 +40,10 @@ class HermesTest {
 
         doReturn(applicationContext).when(springContext).getApplicationContext();
 
-        Map<String, IMessageHandler> beans = new HashMap<>();
+        Map<String, MessageHandler> beans = new HashMap<>();
         beans.put(pingHandler.getClass().getSimpleName(), pingHandler);
 
-        doReturn(beans).when(applicationContext).getBeansOfType(IMessageHandler.class);
+        doReturn(beans).when(applicationContext).getBeansOfType(MessageHandler.class);
         doReturn(PONG).when(pingHandler).handle(ping);
 
         String response = (String) hermes.send(ping);
@@ -51,7 +51,7 @@ class HermesTest {
         assertNotNull(response);
 
         verify(springContext, times(1)).getApplicationContext();
-        verify(applicationContext, times(1)).getBeansOfType(IMessageHandler.class);
+        verify(applicationContext, times(1)).getBeansOfType(MessageHandler.class);
         verify(pingHandler, times(1)).handle(ping);
     }
 
@@ -68,6 +68,6 @@ class HermesTest {
         );
 
         verify(springContext, times(1)).getApplicationContext();
-        verify(applicationContext, times(1)).getBeansOfType(IMessageHandler.class);
+        verify(applicationContext, times(1)).getBeansOfType(MessageHandler.class);
     }
 }

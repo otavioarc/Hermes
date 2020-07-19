@@ -7,7 +7,7 @@ package com.hermes;
  * @param <MessageT> the class type that should be treated by the handler.
  * @param <ResponseT> the class type that handler should return.
  */
-public interface IMessageHandler<MessageT extends IMessage<ResponseT>, ResponseT> {
+public interface MessageHandler<MessageT extends Message<ResponseT>, ResponseT> {
 
     /**
      * Handle {@code message} sent by {@link Hermes} to be treated.
